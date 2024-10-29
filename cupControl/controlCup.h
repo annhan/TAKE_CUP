@@ -9,25 +9,25 @@ struct CupPins {
     uint8_t xoayCupPin; // Chân tín hiệu cho cốc xoay interrup
     // Các chân khác nếu cần
     struct SS_IN {
-        uint8_t BangTai_RA;
-        uint8_t BangTai_VAO;
+        uint8_t Conveyor_Out;
+        uint8_t Conveyor_IN;
         uint8_t GRIP_OPEN;
         uint8_t GRIP_CLOSE;
         uint8_t MOTOR_UP;
         uint8_t MOTOR_DW;
-        uint8_t HETCUP;
+        uint8_t HET_CUP;
         uint8_t CUP_READY;
         uint8_t CUP_GRIP;
     } inputPins;
 
     struct CTR_OUT {
-        uint8_t BangTai_RA;
-        uint8_t BangTai_VAO;
+        uint8_t Conveyor_Out;
+        uint8_t Conveyor_IN;
         uint8_t GRIP_OPEN;
         uint8_t GRIP_CLOSE;
         uint8_t MOTOR_UP;
         uint8_t MOTOR_DW;
-        uint8_t VANCUP;
+        uint8_t CHANGE_CUP;
         uint8_t XOAY_CUP;
     } outputPins;
 };

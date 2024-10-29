@@ -9,25 +9,24 @@ Modbus slave(10, Serial2, TXEN_PIN); // this is slave @1 and RS-485
 CupPins cup2Pins = {
     .xoayCupPin = PA1,
     .inputPins = {
-        .BangTai_RA = PA7,
-        .BangTai_VAO = PC_4,
+        .Conveyor_Out = PA7,
+        .Conveyor_IN = PC_4,
         .GRIP_OPEN = PC_5,
         .GRIP_CLOSE = PB0,
         .MOTOR_UP = PB1,
         .MOTOR_DW = PB10,
-        .HETCUP = PB11,
+        .HET_CUP = PB11,
         .CUP_READY = PB12,
         .CUP_GRIP = PB13
     },
     .outputPins = {
-        .BangTai_RA = PC_10,
-        .BangTai_VAO = PC_11,
+        .Conveyor_Out = PC_10,
+        .Conveyor_IN = PC_11,
         .GRIP_OPEN = PC_12,
         .GRIP_CLOSE = PB3,
         .MOTOR_UP = PB5,
         .MOTOR_DW = PB4,
-        
-        .VANCUP = PB6,
+        .CHANGE_CUP = PB6,
         .XOAY_CUP = PB7
     }
 };
@@ -35,24 +34,24 @@ CupPins cup2Pins = {
 CupPins cup1Pins = {
     .xoayCupPin = PA0,
     .inputPins = {
-        .BangTai_RA = PC13,
-        .BangTai_VAO = PC14,
+        .Conveyor_Out = PC13,
+        .Conveyor_IN = PC14,
         .GRIP_OPEN = PC_0,
         .GRIP_CLOSE = PC_15,
         .MOTOR_UP = PC_1,
         .MOTOR_DW = PC_2,
-        .HETCUP = PC_3,
+        .HET_CUP = PC_3,
         .CUP_READY = PA5,
         .CUP_GRIP = PA6
     },
     .outputPins = {
-        .BangTai_RA = PB14,
-        .BangTai_VAO = PB15,
+        .Conveyor_Out = PB14,
+        .Conveyor_IN = PB15,
         .GRIP_OPEN = PC_6,
         .GRIP_CLOSE = PC_7,
         .MOTOR_UP = PC_9,
         .MOTOR_DW = PC_8,
-        .VANCUP = PA8,
+        .CHANGE_CUP = PA8,
         .XOAY_CUP = PA15
     }
 };

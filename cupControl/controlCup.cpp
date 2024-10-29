@@ -77,24 +77,24 @@ CupControl::State CupControl::getState() {
 
 
 void CupControl::setupInputPins() {
-    pinMode(inputPins->BangTai_RA, INPUT);
-    pinMode(inputPins->BangTai_VAO, INPUT);
+    pinMode(inputPins->Conveyor_Out, INPUT);
+    pinMode(inputPins->Conveyor_IN, INPUT);
     pinMode(inputPins->GRIP_OPEN, INPUT);
     pinMode(inputPins->GRIP_CLOSE, INPUT);
     pinMode(inputPins->MOTOR_UP, INPUT);
     pinMode(inputPins->MOTOR_DW, INPUT);
-    pinMode(inputPins->HETCUP, INPUT);
+    pinMode(inputPins->HET_CUP, INPUT);
     pinMode(inputPins->CUP_READY, INPUT);
 }
 
 void CupControl::setupOutputPins() {
-    pinMode(outputPins->BangTai_RA, OUTPUT);
-    pinMode(outputPins->BangTai_VAO, OUTPUT);
+    pinMode(outputPins->Conveyor_Out, OUTPUT);
+    pinMode(outputPins->Conveyor_IN, OUTPUT);
     pinMode(outputPins->GRIP_OPEN, OUTPUT);
     pinMode(outputPins->GRIP_CLOSE, OUTPUT);
     pinMode(outputPins->MOTOR_UP, OUTPUT);
     pinMode(outputPins->MOTOR_DW, OUTPUT);
-    pinMode(outputPins->VANCUP, OUTPUT);
+    pinMode(outputPins->CHANGE_CUP, OUTPUT);
     pinMode(outputPins->XOAY_CUP, OUTPUT);
 }
 
@@ -105,35 +105,35 @@ void CupControl::handleInit() {
 }
 
 void CupControl::handleDuaVao() {
-    static int isVanCupActive = 0;
-    static unsigned long vanCupStartTime = 0;
+    static int isCHANGE_CUPActive = 0;
+    static unsigned long CHANGE_CUPStartTime = 0;
     static bool isWriteDone = false; // Biến static để giữ trạng thái
-    int block_ss = digitalRead(inputPins->HETCUP);
+    int block_ss = digitalRead(inputPins->HET_CUP);
     if (block_ss == LOW){ // có ly thi cu cap nhat trang thai
-      if (isVanCupActive == 0){
-        digitalWrite(outputPins->VANCUP, TurnOn);  
-        isVanCupActive = 1;
-        vanCupStartTime = millis();
+      if (isCHANGE_CUPActive == 0){
+        digitalWrite(outputPins->CHANGE_CUP, TurnOn);  
+        isCHANGE_CUPActive = 1;
+        CHANGE_CUPStartTime = millis();
       }
-      else if (isVanCupActive == 3){
+      else if (isCHANGE_CUPActive == 3){
           time_begin = 0;
-          isVanCupActive = 0;
+          isCHANGE_CUPActive = 0;
           state = NOCUP;  
       }
-      if (isVanCupActive == 1 && (millis() - vanCupStartTime >= 300)) {
-            digitalWrite(outputPins->VANCUP, TurnOFF);  
-            isVanCupActive = 2;
+      if (isCHANGE_CUPActive == 1 && (millis() - CHANGE_CUPStartTime >= 300)) {
+            digitalWrite(outputPins->CHANGE_CUP, TurnOFF);  
+            isCHANGE_CUPActive = 2;
       }
-      if (isVanCupActive == 2 && (millis() - vanCupStartTime >= 600)) {
-            digitalWrite(outputPins->VANCUP, TurnOFF);  
-            isVanCupActive = 3;
+      if (isCHANGE_CUPActive == 2 && (millis() - CHANGE_CUPStartTime >= 600)) {
+            digitalWrite(outputPins->CHANGE_CUP, TurnOFF);  
+            isCHANGE_CUPActive = 3;
       }
     }  
 
     else {
         if(isWriteDone == false){
-              digitalWrite(outputPins->BangTai_RA, TurnOFF);  // turn the LED on (HIGH is the voltage level)
-              digitalWrite(outputPins->BangTai_VAO, TurnOn);  // turn the LED on (HIGH is the voltage level)
+              digitalWrite(outputPins->Conveyor_Out, TurnOFF);  // turn the LED on (HIGH is the voltage level)
+              digitalWrite(outputPins->Conveyor_IN, TurnOn);  // turn the LED on (HIGH is the voltage level)
               digitalWrite(outputPins->GRIP_CLOSE, TurnOFF);  // turn the LED on (HIGH is the voltage level)
               digitalWrite(outputPins->GRIP_OPEN, TurnOn);  // turn the LED on (HIGH is the voltage level) 
               isWriteDone = true;
@@ -144,7 +144,7 @@ void CupControl::handleDuaVao() {
           state = NangCup;
           isWriteDone = false;
           time_begin = 0;
-          isVanCupActive = 0;
+          isCHANGE_CUPActive = 0;
         }
     }
 
@@ -228,7 +228,7 @@ void CupControl::handleMOCUP50() {
 
 void CupControl::handleHaCUp() {
     // Logic cho trạng thái HaCUp
-    int status_grip = digitalRead(inputPins->BangTai_VAO);
+    int status_grip = digitalRead(inputPins->Conveyor_IN);
     if (status_grip == LOW){ // co cup thi qua state hạ
           digitalWrite(outputPins->MOTOR_DW, TurnOn);  // turn the LED on (HIGH is the voltage level)
         digitalWrite(outputPins->MOTOR_UP, TurnOFF);  // turn the LED on (HIGH is the voltage level)
@@ -268,11 +268,11 @@ void CupControl::handleMoCUP() {
 }
 
 void CupControl::handleDuaRa() {
-    digitalWrite(outputPins->BangTai_VAO, TurnOFF);  // turn the LED on (HIGH is the voltage level)
-    digitalWrite(outputPins->BangTai_RA, TurnOn);  // turn the LED on (HIGH is the voltage level)
-    int status_grip = digitalRead(inputPins->BangTai_RA);
+    digitalWrite(outputPins->Conveyor_IN, TurnOFF);  // turn the LED on (HIGH is the voltage level)
+    digitalWrite(outputPins->Conveyor_Out, TurnOn);  // turn the LED on (HIGH is the voltage level)
+    int status_grip = digitalRead(inputPins->Conveyor_Out);
     if (status_grip == LOW){
-      digitalWrite(outputPins->BangTai_RA, TurnOFF);  // turn the LED on (HIGH is the voltage level) 
+      digitalWrite(outputPins->Conveyor_Out, TurnOFF);  // turn the LED on (HIGH is the voltage level) 
       state = Wait;
     }
 }
