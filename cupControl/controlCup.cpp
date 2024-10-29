@@ -9,7 +9,10 @@ CupControl::CupControl(CupPins& pins) : SS_XOAY_CUP_I(pins.xoayCupPin), state(In
 void CupControl::setup() {
     setupInputPins();
     setupOutputPins();
-    attachInterrupt(digitalPinToInterrupt(SS_XOAY_CUP_I), &CupControl::CupInterruptHandler, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(SS_XOAY_CUP_I), [this]() {
+        this->CupInterruptHandler();
+    }, CHANGE);
+    //attachInterrupt(digitalPinToInterrupt(SS_XOAY_CUP_I), &CupControl::CupInterruptHandler, CHANGE);
 }
 
 void CupControl::control() {
@@ -144,8 +147,8 @@ void CupControl::handleXoayCUp() {
       digitalWrite(outputPins->XOAY_CUP, TurnOn);  // turn the LED on (HIGH is the voltage level)
       time_begin = millis();
     }
-    if (interrup_status == true){
-      interrup_status = false;
+    if (interrup_status == 2){
+      interrup_status = 0;
       time_begin = 0;
       state = CheckSS;
     }
@@ -153,6 +156,13 @@ void CupControl::handleXoayCUp() {
 
 void CupControl::handleCheckSS() {
     // Logic cho trạng thái CheckSS
+    int status_grip = digitalRead(inputPins->CUP_GRIP);
+    if (status_grip == LOW){ // co cup thi qua state hạ
+      state = HaCUp;
+    }
+    else{
+      state = KepCup;
+    }
 }
 
 void CupControl::handleKepCup() {
@@ -169,23 +179,54 @@ void CupControl::handleMOCUP50() {
 
 void CupControl::handleHaCUp() {
     // Logic cho trạng thái HaCUp
+    int status_grip = digitalRead(inputPins->BangTai_VAO);
+    if (status_grip == LOW){ // co cup thi qua state hạ
+          digitalWrite(outputPins->MOTOR_DW, TurnOn);  // turn the LED on (HIGH is the voltage level)
+        digitalWrite(outputPins->MOTOR_UP, TurnOFF;  // turn the LED on (HIGH is the voltage level)
+        int status_grip = digitalRead(inputPins->MOTOR_DW);
+        if (status_grip == LOW){
+          digitalWrite(outputPins->MOTOR_DW, TurnOFF);  // turn the LED on (HIGH is the voltage level) 
+          state = MoCUP;
+        }
+    }
 }
 
 void CupControl::handleMoCUP() {
     // Logic cho trạng thái MoCUP
+    digitalWrite(outputPins->GRIP_CLOSE, TurnOFF);  // turn the LED on (HIGH is the voltage level)
+    digitalWrite(outputPins->GRIP_OPEN, TurnOn);  // turn the LED on (HIGH is the voltage level) 
+    int status_grip = digitalRead(inputPins->GRIP_OPEN);
+    if (status_grip == LOW){
+      digitalWrite(outputPins->GRIP_OPEN, TurnOFF);  // turn the LED on (HIGH is the voltage level) 
+      state = DuaRa;
+    }
 }
 
 void CupControl::handleDuaRa() {
-    // Logic cho trạng thái DuaRa
+    digitalWrite(outputPins->BangTai_VAO, TurnOFF);  // turn the LED on (HIGH is the voltage level)
+    digitalWrite(outputPins->BangTai_RA, TurnOn);  // turn the LED on (HIGH is the voltage level)
+    int status_grip = digitalRead(inputPins->BangTai_RA);
+    if (status_grip == LOW){
+      digitalWrite(outputPins->GRIP_OPEN, BangTai_RA);  // turn the LED on (HIGH is the voltage level) 
+      state = Wait;
+    }
 }
 
 void CupControl::handleWait() {
-    // Logic cho trạng thái Wait
+  //Chờ robot lấy ly. Nếu không có ly trong 5 giây thì quay về trạng thái đầu để đi lấy ly
+  int reading = digitalRead(inputPins->CUP_READY);
+  if (reading == HIGH){ // có ly thi cu cap nhat trang thai
+    time_begin = millis();
+  }
+  if ((millis() - time_begin) >  5000) { //5s
+        time_begin = 0
+        state = DuaVao;  
+  }
 }
 
 // Hàm xử lý ngắt
 void CupControl::CupInterruptHandler() {
-    digitalWrite(outputPins->XOAY_CUP, TurnOff);  // turn the LED on (HIGH is the voltage level)
+    digitalWrite(outputPins->XOAY_CUP, TurnOFF);  // turn the LED on (HIGH is the voltage level)
     interrup_status = 2;
 }
 
