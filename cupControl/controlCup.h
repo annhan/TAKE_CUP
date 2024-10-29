@@ -36,19 +36,20 @@ struct CupPins {
 class CupControl {
   public:
       enum State {
-          Init,
-          DuaVao,
-          NangCup,
-          KepCup50,
-          XoayCUp,
-          CheckSS,
-          KepCup,
-          HaCup50,
-          MOCUP50,
-          HaCUp,
-          MoCUP,
-          DuaRa,
-          Wait
+          Init=0,
+          DuaVao=1,
+          NangCup=2,
+          KepCup50=3,
+          XoayCUp=4,
+          CheckSS=5,
+          KepCup=6,
+          HaCup50=7,
+          MOCUP50=8,
+          HaCUp=9,
+          MoCUP=10,
+          DuaRa=11,
+          Wait=12,
+          NOCUP=20
       };
 
       // Constructor
@@ -63,6 +64,7 @@ class CupControl {
       // Thiết lập trạng thái
       void setState(State newState);
       State getState();
+      bool isNoCup();
 // Hàm xử lý ngắt
       void CupInterruptHandler();
   private:
@@ -91,7 +93,7 @@ class CupControl {
       void handleMoCUP();
       void handleDuaRa();
       void handleWait();
-
+      void handleNOCUP();
       
 };
 

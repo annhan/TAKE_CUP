@@ -2,8 +2,9 @@
 #include "controlCup.h"
 
 #define TXEN_PIN PA11
-
-Modbus slave(1, Serial2, TXEN_PIN); // this is slave @1 and RS-485
+#define START_PIN PB8
+#define BZZZ_PIN PB9
+Modbus slave(10, Serial2, TXEN_PIN); // this is slave @1 and RS-485
 
 CupPins cup2Pins = {
     .xoayCupPin = PA1,
@@ -67,9 +68,18 @@ void setup() {
 uint16_t au16data[7] = {0, 0, 0, 0, 0, 0, 0 }; 
 
 void loop() {
-
-    CupControl1.control(); // Gọi hàm control để điều khiển Cup
-    CupControl2.control(); // Gọi hàm control để điều khiển Cup
+    int start_status = digitalRead(START_PIN);
+    if (start_status == LOW){
+      CupControl1.control(); // Gọi hàm control để điều khiển Cup
+      CupControl2.control(); // Gọi hàm control để điều khiển Cup
+      if (CupControl1.isNoCup() || CupControl2.isNoCup()){
+          digitalWrite(BZZZ_PIN, HIGH);
+      }
+      else{
+          digitalWrite(BZZZ_PIN, LOW);
+      }
+    }
+    
     au16data[0] = CupControl1.getState();
     au16data[1] = CupControl1.getState();
     slave.poll( au16data, 7);
